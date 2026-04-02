@@ -77,6 +77,8 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ message: err.message || 'Something went wrong!' });
 });
 
+export default app;
+
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB and start server (attach socket.io)
@@ -136,4 +138,6 @@ const startServer = async () => {
   }
 };
 
-startServer();
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
