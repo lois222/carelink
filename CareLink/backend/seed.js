@@ -12,7 +12,7 @@ const seedDatabase = async () => {
     console.log('Connected to MongoDB');
 
     // Check if admin already exists
-    const adminExists = await User.findOne({ email: 'admin', userType: 'admin' });
+    const adminExists = await User.findOne({ email: 'admin@carelink.com', userType: 'admin' });
 
     if (adminExists) {
       console.log('Admin user already exists');
@@ -34,10 +34,10 @@ const seedDatabase = async () => {
         console.log('Test notification already exists');
       }
     } else {
-      // Create admin user with credentials admin/admin (password will be hashed by schema)
+      // Create admin user with credentials admin@carelink.com/admin (password will be hashed by schema)
       const adminUser = new User({
         name: 'Admin User',
-        email: 'admin',
+        email: 'admin@carelink.com',
         password: 'admin',
         userType: 'admin',
         phone: '+233 555 000 000',
@@ -47,7 +47,7 @@ const seedDatabase = async () => {
 
       await adminUser.save();
       console.log('✅ Admin user created successfully');
-      console.log('Email: admin');
+      console.log('Email: admin@carelink.com');
       console.log('Password: admin');
       
       // Create a test notification for the admin
@@ -165,12 +165,16 @@ const seedDatabase = async () => {
       }
     }
 
+    // Approve all caregivers (pre-save hook sets them to false by default)
+    await User.updateMany({ userType: 'caregiver' }, { approved: true });
+    console.log('✅ Approved all caregiver users');
+
     console.log(`✅ Created ${familyCount} family users`);
     console.log(`✅ Created ${caregiverCount} caregiver users`);
 
     console.log('\n📋 Sample Credentials:');
     console.log('Admin:');
-    console.log('  Email: admin | Password: admin');
+    console.log('  Email: admin@carelink.com | Password: admin');
     console.log('\nFamily Users:');
     familyUsers.forEach((user) => {
       console.log(`  Email: ${user.email} | Password: password123`);
